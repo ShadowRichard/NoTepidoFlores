@@ -90,7 +90,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 /* ---------- Aprender ---------- */
 .learnbody{display:flex;flex-direction:column;gap:16px;padding-block:8px 40px}
 .lead{margin:0;font-size:17px}
-.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px}
 .ccard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:12px;text-align:left;min-height:84px}
 .ccard strong{font-family:var(--f-display);font-weight:900;font-size:38px;line-height:.9}
 .ccard small{font:600 12px var(--f-mono);color:var(--muted);white-space:nowrap}
@@ -184,7 +184,6 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 
 @media (min-width:900px){
   .pbody{grid-template-columns:380px minmax(0,1fr);column-gap:28px;align-items:start;grid-template-areas:"now view" "now board" "notes board" "notes strip" "done strip"}
-  .cgrid{grid-template-columns:repeat(3,1fr)}
   .learnbody{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
   .learnbody > .full{grid-column:1/-1}
 }
@@ -198,7 +197,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
   <div class="hero gut">
     <div class="pills"><span class="pill">BAJO 4 CUERDAS</span><span class="pill">TONALIDAD Eb</span><span class="pill">PRINCIPIANTE</span></div>
     <h1>No te pido flores <span>en bajo</span></h1>
-    <p>Aprende la línea de bajo en pasos cortos. Cada paso te dice qué cuerda y qué traste tocar, y suena contigo.</p>
+    <p>Aprende la línea de bajo completa, basada en la versión de Miguel Torres, en pasos cortos. Cada paso te dice qué cuerda y qué traste tocar, y suena contigo.</p>
   </div>
   <div class="homebody gut">
     <div class="ready">
@@ -206,7 +205,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
       <button class="btn" id="testHome" type="button">🔊 Probar</button>
     </div>
     <div class="progress">
-      <div class="row"><span class="label">Tu camino</span><span class="label" id="progTxt">0 de 6</span></div>
+      <div class="row"><span class="label">Tu camino</span><span class="label" id="progTxt">0 de 8</span></div>
       <div class="bar"><i id="progBar"></i></div>
     </div>
     <ol class="steps" id="steps"></ol>
@@ -221,7 +220,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 <main id="learn" class="screen" hidden>
   <div class="top gut">
     <button class="iconbtn" type="button" data-go="#" aria-label="Volver a los pasos">‹</button>
-    <h2>Conoce las notas<small>Paso 1 de 6</small></h2>
+    <h2>Conoce las notas<small>Paso 1 de 8</small></h2>
   </div>
   <div class="learnbody gut">
     <p class="lead full">Toca cada acorde: lo escuchas y ves en el bajo dónde va. <b>Naranja</b> es la nota principal y <b>verde</b> la segunda nota.</p>
@@ -234,7 +233,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
     </div>
     <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
       <div class="cgrid" id="cgrid"></div>
-      <button class="btn" type="button" id="playOrder">▶ Escuchar la estrofa en orden</button>
+      <button class="btn" type="button" id="playOrder">▶ Escuchar el coro en orden</button>
       <button class="btn ok block" type="button" id="learnDone">Listo, siguiente paso →</button>
     </div>
   </div>
@@ -278,7 +277,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
       <section class="a-strip" style="display:flex;flex-direction:column;gap:8px">
         <span class="label">Acordes de esta parte · toca uno para oírlo</span>
         <div class="strip" id="strip"></div>
-        <p class="note" id="warn" hidden>El final del coro (Ab – Bb) es aproximado. Compáralo de oído con la canción.</p>
+        <p class="note" id="warn">Acordes del PDF de Moises.ai. La duración de cada acorde es aproximada: compárala con la grabación.</p>
       </section>
       <div class="a-done done-row"><button class="linkbtn" type="button" id="markDone">✓ Ya me sale, marcar como logrado</button></div>
     </div>
@@ -333,22 +332,35 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 const OPEN=[28,33,38,43];            // MIDI cuerdas al aire: E1 A1 D2 G2
 const SN=['E','A','D','G'];
 const NAMES=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
-const CH={Eb:{r:[1,6],f:[2,8]},Bb:{r:[0,6],f:[1,8]},Cm:{r:[1,3],f:[2,5]},Ab:{r:[0,4],f:[1,6]},Fm:{r:[0,1],f:[1,3]},Gm:{r:[0,3],f:[1,5]}};
+const CH={Eb:{r:[1,6],f:[2,8]},Bb:{r:[0,6],f:[1,8]},Cm:{r:[1,3],f:[2,5]},Ab:{r:[0,4],f:[1,6]},Fm:{r:[0,1],f:[1,3]}};
+// Estructura tomada del PDF "No Te Pido Flores Cover Bass Miguel Torres" (acordes de Moises.ai). Duraciones aproximadas: 4 = 1 compás, 2 = medio compás.
+const P=str=>str.split(' ').map(x=>[x.replace(/\d/g,''),+x.replace(/\D/g,'')]);
 const S={
-  estrofa:{name:'Estrofa',ch:[['Eb',4],['Bb',4],['Cm',4],['Ab',4]]},
-  pre:{name:'Pre-coro',ch:[['Gm',4],['Eb',4],['Cm',4],['Ab',2],['Bb',2],['Eb',4]]},
-  coro:{name:'Coro',ch:[['Eb',4],['Bb',4],['Fm',4],['Ab',2],['Bb',2]],warn:true},
-  cierre:{name:'Cierre',ch:[['Eb',4],['Bb',4],['Cm',4],['Ab',4],['Fm',4]]}
+  intro:{name:'Intro',ch:P('Ab4 Eb4 Ab4 Eb2 Bb2 Fm2 Ab2 Bb2 Eb2 Bb4 Fm4 Ab4 Eb4')},
+  estrofa:{name:'Estrofa',ch:P('Bb4 Cm4 Ab4 Eb4 Bb4 Cm4 Ab4 Fm4')},
+  pre:{name:'Pre-coro',ch:P('Bb4 Eb4 Cm4 Bb2 Ab2 Bb4 Eb4')},
+  coro:{name:'Coro',ch:P('Bb4 Fm4 Ab4 Eb4 Bb4 Fm4 Ab4 Eb2 Bb2')},
+  inter:{name:'Interludio',ch:P('Eb2 Bb2 Fm4 Ab4 Eb4')},
+  puente:{name:'Puente',ch:P('Eb4 Fm2 Bb2 Ab4 Ab4 Fm2 Eb2 Bb4 Fm4 Ab4 Ab4 Eb2 Bb2 Fm2 Ab2 Eb4')},
+  final:{name:'Final',ch:P('Bb4 Fm2 Ab2 Eb4 Bb4 Fm2 Ab2 Eb4')}
 };
-S.todo={name:'Canción completa',ch:[...S.estrofa.ch,...S.estrofa.ch,...S.cierre.ch,...S.pre.ch,...S.coro.ch,...S.coro.ch],warn:true};
+const FORM=[['intro'],['estrofa'],['pre'],['coro'],['inter'],
+  ['estrofa','Estrofa 2',P('Bb4 Cm4 Ab4 Eb4 Bb4 Cm4 Ab4 Ab4')],['pre','Pre-coro 2',P('Bb4 Eb4 Cm4 Ab2 Bb2 Eb4')],['coro','Coro 2'],
+  ['inter','Interludio 2',P('Ab4 Eb4 Bb4 Fm4 Ab4')],['puente'],['final','Puente 2'],['coro','Coro 3',P('Bb4 Fm4 Ab4 Eb4 Bb4 Fm4 Ab4 Eb4')],
+  ['puente','Final',P('Bb4 Fm4 Ab4 Eb4 Bb4 Fm4 Ab4 Eb4')]];
+S.todo={name:'Canción completa',ch:[]};
+FORM.forEach(([k,label,ch])=>(ch||S[k].ch).forEach(([c,b])=>S.todo.ch.push([c,b,label||S[k].name])));
+Object.keys(S).forEach(k=>{if(k!=='todo')S[k].ch.forEach(x=>x[2]=S[k].name)});
 const LV=[[1,'Fácil · 1 nota'],[2,'Normal · 2 notas'],[3,'Reto · nota puente']];
 const STEPS=[
-  {n:1,learn:true,t:'Conoce las notas',d:'Escucha y ubica los acordes en el bajo.'},
-  {n:2,t:'Estrofa · una nota',d:'La nota principal de cada acorde, despacio.',sec:'estrofa',lvl:1,bpm:60},
-  {n:3,t:'Estrofa · dos notas',d:'Agrega la segunda nota: "bum… bum".',sec:'estrofa',lvl:2,bpm:65},
-  {n:4,t:'Pre-coro',d:'Un acorde nuevo (Gm) y dos cambios rápidos.',sec:'pre',lvl:2,bpm:65},
-  {n:5,t:'Coro',d:'La parte que todos cantan.',sec:'coro',lvl:2,bpm:70},
-  {n:6,t:'Canción completa',d:'Todas las partes seguidas.',sec:'todo',lvl:2,bpm:75}
+  {n:1,learn:true,t:'Conoce las notas',d:'Los 5 acordes de la canción: dónde van y cómo suenan.'},
+  {n:2,t:'Coro · una nota',d:'Bb – Fm – Ab – Eb. La parte que más se repite.',sec:'coro',lvl:1,bpm:60},
+  {n:3,t:'Coro · dos notas',d:'Agrega la segunda nota: "bum… bum".',sec:'coro',lvl:2,bpm:65},
+  {n:4,t:'Estrofa',d:'Bb – Cm – Ab – Eb. Aparece Cm.',sec:'estrofa',lvl:2,bpm:65},
+  {n:5,t:'Pre-coro',d:'Cambios rápidos de medio compás.',sec:'pre',lvl:2,bpm:65},
+  {n:6,t:'Intro',d:'Lo que suena antes de empezar a cantar.',sec:'intro',lvl:2,bpm:70},
+  {n:7,t:'Puente',d:'La parte de "me da pena", con cambios rápidos.',sec:'puente',lvl:2,bpm:70},
+  {n:8,t:'Canción completa',d:'Toda la canción, de principio a fin.',sec:'todo',lvl:2,bpm:75}
 ];
 const ROLE={r:{c:'var(--root)',t:'Nota principal'},f:{c:'var(--fifth)',t:'Segunda nota'},p:{c:'var(--pass)',t:'Nota puente'}};
 const FR=9;
@@ -369,7 +381,7 @@ function route(){
   closeSheet();
   $('home').hidden=$('learn').hidden=$('player').hidden=true;
   if(h==='#paso-1'){$('learn').hidden=false;initLearn()}
-  else if(/^#paso-[2-6]$/.test(h)){const st=STEPS[+h.slice(6)-1];stepN=st.n;sec=st.sec;lvl=st.lvl;bpm=st.bpm;openPlayer()}
+  else if(/^#paso-[2-8]$/.test(h)){const st=STEPS[+h.slice(6)-1];stepN=st.n;sec=st.sec;lvl=st.lvl;bpm=st.bpm;openPlayer()}
   else if(h==='#libre'){stepN=0;openPlayer()}
   else{$('home').hidden=false;renderHome()}
   window.scrollTo(0,0);
@@ -422,7 +434,7 @@ const nm=(s,f)=>NAMES[(OPEN[s]+f)%12];
 const where=(s,f)=>'Cuerda '+SN[s]+' · '+(f===0?'al aire':'traste '+f);
 
 /* ================= Paso 1 ================= */
-let learnSel='Eb',learnInit=false;
+let learnSel='Bb',learnInit=false;
 function initLearn(){
   if(!learnInit){drawBoard($('boardLearn'));learnInit=true}
   $('cgrid').innerHTML=Object.keys(CH).map(c=>'<button type="button" class="ccard" data-c="'+c+'" aria-pressed="'+(c===learnSel)+'"><strong>'+c+'</strong><small>Cuerda '+SN[CH[c].r[0]]+' · '+CH[c].r[1]+'</small></button>').join('');
@@ -440,7 +452,7 @@ function showLearn(c,sound){
 $('cgrid').addEventListener('click',e=>{const b=e.target.closest('.ccard');if(b)showLearn(b.dataset.c,true)});
 $('playOrder').addEventListener('click',()=>{
   unlock().then(ok=>{if(!ok)return;const t0=ctx.currentTime+0.05;
-    ['Eb','Bb','Cm','Ab'].forEach((c,i)=>{const d=CH[c];voice(t0+i*1.1,OPEN[d.r[0]]+d.r[1],0.9);setTimeout(()=>showLearn(c,false),i*1100)})});
+    ['Bb','Fm','Ab','Eb'].forEach((c,i)=>{const d=CH[c];voice(t0+i*1.1,OPEN[d.r[0]]+d.r[1],0.9);setTimeout(()=>showLearn(c,false),i*1100)})});
 });
 $('learnDone').addEventListener('click',()=>{markDone(1);go('#paso-2')});
 
@@ -460,12 +472,11 @@ function openPlayer(){
 }
 function renderSegs(){
   const mk=(el,items,cur,fn)=>{el.innerHTML='';items.forEach(([k,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed',String(k===cur));b.onclick=()=>fn(k);el.appendChild(b)})};
-  mk($('secSeg'),['estrofa','pre','coro','todo'].map(k=>[k,S[k].name]),sec,k=>{sec=k;const p=playing;if(p)stop();openPlayer();if(p)setTimeout(start,130)});
+  mk($('secSeg'),['intro','estrofa','pre','coro','inter','puente','todo'].map(k=>[k,S[k].name]),sec,k=>{sec=k;const p=playing;if(p)stop();openPlayer();if(p)setTimeout(start,130)});
   mk($('lvlSeg'),LV,lvl,k=>{lvl=k;const p=playing;if(p)stop();openPlayer();if(p)setTimeout(start,130)});
 }
 function renderStrip(){
-  $('strip').innerHTML=S[sec].ch.map(([c,b],i)=>'<button type="button" class="chip" data-i="'+i+'" style="flex-grow:'+b+'"><strong>'+c+'</strong><small>'+b+' tiempos</small></button>').join('');
-  $('warn').hidden=!S[sec].warn;
+  $('strip').innerHTML=S[sec].ch.map(([c,b],i)=>'<button type="button" class="chip" data-i="'+i+'" style="flex-grow:'+b+'"><strong>'+c+'</strong><small>'+(sec==='todo'?S[sec].ch[i][2]:b+' tiempos')+'</small></button>').join('');
 }
 $('strip').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b||playing)return;const i=+b.dataset.i;showChord(i);setBeat(-1);previewChord(i)});
 function renderTabs(){
@@ -489,6 +500,7 @@ function chordNotes(i){const k=sec+lvl+$('loop').checked;if(k!==evKey){evCache=b
 function showChord(i,hitK){
   curChord=i;const c=S[sec].ch[i][0];
   $('chord').textContent=c;
+  curSecName=S[sec].ch[i][2]||S[sec].name;updLbl();
   const j=nextIdx(i);
   $('nextName').textContent=j<0?'Fin':S[sec].ch[j][0];
   const notes=chordNotes(i);
@@ -609,7 +621,9 @@ function draw(){
   }
   requestAnimationFrame(draw);
 }
-function setPlayUI(on){$('icoPlay').hidden=on;$('icoStop').hidden=!on;$('play').setAttribute('aria-label',on?'Parar':'Tocar');$('nowLbl').textContent=on?'Toca ahora':'Ahora'}
+let curSecName='';
+function updLbl(){$('nowLbl').textContent=(playing?'Toca ahora':'Ahora')+(sec==='todo'?' · '+curSecName:'')}
+function setPlayUI(on){$('icoPlay').toggleAttribute('hidden',on);$('icoStop').toggleAttribute('hidden',!on);$('play').setAttribute('aria-label',on?'Parar':'Tocar');updLbl()}
 async function wakeOn(){try{if('wakeLock' in navigator)wake=await navigator.wakeLock.request('screen')}catch(e){wake=null}}
 function wakeOff(){try{if(wake)wake.release()}catch(e){}wake=null}
 function start(){
