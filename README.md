@@ -1,7 +1,12 @@
-# Bajo fácil · No te pido flores
+# No te pido flores · Tablatura de bajo
 
-Bajo de 4 cuerdas · Eb · 106 BPM · A = 440 Hz.
+Bajo 4 cuerdas · Eb · 106 BPM · A = 440 Hz. Cuerdas numeradas: 4 = E (gruesa) … 1 = G (delgada).
 
-Elige la parte, dale ▶ y toca la cuerda y el traste que aparecen. Con **🎵 Cargar canción** puedes usar tu MP3; se guarda solo en tu navegador.
+- Tablatura por compases con cursor sincronizado y desplazamiento automático
+- **Notas reales** (transcripción del bajo aislado) o **Fácil** (dos notas por acorde)
+- Velocidad 50–100 % sin cambiar el tono, bucle A–B tocando compases, toca un compás para saltar
+- Diapasón con la nota actual y la siguiente
 
-Acordes y tiempos: MusicXML de Moises (cover de Miguel Torres), con la grilla ajustada al bajo aislado.
+Carga tu MP3 con 🎵 (se guarda solo en tu navegador). Sin canción suena un bajo guía.
+
+Acordes y tiempos: MusicXML de Moises. Notas reales: transcripción automática; puede haber errores puntuales.
