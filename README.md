@@ -1,10 +1,10 @@
-# Bajo fácil · No te pido flores (Eb)
+# No te pido flores · Diagramas de bajo
 
-Entrenador interactivo de bajo eléctrico de 4 cuerdas (E A D G) en tonalidad Eb.
+Bajo 4 cuerdas · Eb · 106 BPM. Cuerda 4 = E (gruesa) … 1 = G (delgada).
 
-- Diapasón animado: raíz, quinta y nota de paso
-- Tablatura de bajo por acorde
-- Metrónomo, bajo guía y tempo de 50 a 130 BPM
-- Tres niveles de dificultad
+| Parte | Acordes |
+|---|---|
+| Verso | Eb · Bb · Cm · Ab |
+| Coro | Eb · Bb · Fm · Ab |
 
-Abre `index.html` en el navegador o publícalo con GitHub Pages.
+Punto lleno = nota principal · círculo = segunda nota. Toca una tarjeta para oír las dos notas.
