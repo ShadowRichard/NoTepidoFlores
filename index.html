@@ -11,7 +11,7 @@
 <style>
 html{-webkit-text-size-adjust:100%}
 body{margin:0}
-[hidden]{display:none!important}
+button{-webkit-tap-highlight-color:transparent}
 /* Layout: dos bloques (Verso, Coro), cada uno con 4 tarjetas: nombre grande + diagrama vertical de bajo */
 :root{
   --bg:#f3f1ec; --card:#fff; --ink:#1d1a17; --muted:#857c73; --line:#ddd6cc; --grid:#3a332d; --accent:#d4572a;
@@ -62,14 +62,34 @@ function diagram(c){
 const card=c=>'<button type="button" class="card" data-c="'+c+'"><b>'+c+'</b>'+diagram(c)+'</button>';
 document.getElementById('verso').innerHTML=['Eb','Bb','Cm','Ab'].map(card).join('');
 document.getElementById('coro').innerHTML=['Eb','Bb','Fm','Ab'].map(card).join('');
-let ctx=null,last=null;const phone=(()=>{try{return matchMedia('(pointer:coarse)').matches}catch(e){return false}})();
-function note(m,t){const f=440*Math.pow(2,(m-69)/12)*(phone?2:1),o=ctx.createOscillator(),o2=ctx.createOscillator(),lp=ctx.createBiquadFilter(),g=ctx.createGain();
-  o.type='sawtooth';o.frequency.value=f;o2.type='sine';o2.frequency.value=f;lp.type='lowpass';lp.frequency.setValueAtTime(phone?2400:1600,t);lp.frequency.exponentialRampToValueAtTime(phone?700:380,t+0.4);
-  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.6,t+0.008);g.gain.exponentialRampToValueAtTime(0.0001,t+0.9);
-  o.connect(lp);o2.connect(lp);lp.connect(g);g.connect(ctx.destination);[o,o2].forEach(x=>{x.start(t);x.stop(t+0.95)})}
+let ctx=null,master=null,keep=null,last=null;
+const phone=(()=>{try{return matchMedia('(pointer:coarse)').matches||/iPhone|iPad|Android/i.test(navigator.userAgent)}catch(e){return false}})();
+function silentWav(){const sr=8000,n=1600,b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
+  let s='';new Uint8Array(b).forEach(x=>s+=String.fromCharCode(x));return 'data:audio/wav;base64,'+btoa(s)}
+// Debe correr dentro del toque: crea y despierta el audio (iPhone/Android lo exigen)
+function unlock(){
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+  try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}   // iPhone: suena aunque esté en silencio
+  if(!ctx){ctx=new AC();master=ctx.createGain();master.gain.value=0.9;const c=ctx.createDynamicsCompressor();master.connect(c);c.connect(ctx.destination)}
+  try{if(!keep){keep=new Audio(silentWav());keep.loop=true;keep.setAttribute('playsinline','')}const p=keep.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}
+  let r=Promise.resolve();if(ctx.state!=='running'){try{r=ctx.resume()}catch(e){}}
+  try{const b=ctx.createBuffer(1,1,22050),x=ctx.createBufferSource();x.buffer=b;x.connect(ctx.destination);x.start(0)}catch(e){}
+  return Promise.resolve(r).catch(()=>{});
+}
+['pointerdown','touchend','keydown'].forEach(n=>document.addEventListener(n,()=>{if(!ctx||ctx.state!=='running')unlock()},{passive:true}));
+function note(m,t){
+  const f=440*Math.pow(2,(m-69)/12)*(phone?2:1),o=ctx.createOscillator(),o2=ctx.createOscillator(),o3=ctx.createOscillator(),g3=ctx.createGain(),lp=ctx.createBiquadFilter(),g=ctx.createGain();
+  o.type='sawtooth';o.frequency.value=f;o2.type='sine';o2.frequency.value=f;o3.type='square';o3.frequency.value=f*2;g3.gain.value=0.15;
+  lp.type='lowpass';lp.frequency.setValueAtTime(phone?2600:1800,t);lp.frequency.exponentialRampToValueAtTime(phone?800:420,t+0.4);
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.7,t+0.008);g.gain.exponentialRampToValueAtTime(0.0001,t+0.9);
+  o.connect(lp);o2.connect(lp);o3.connect(g3);g3.connect(lp);lp.connect(g);g.connect(master);[o,o2,o3].forEach(x=>{x.start(t);x.stop(t+0.95)});
+}
 document.addEventListener('click',e=>{const b=e.target.closest('.card');if(!b)return;
-  const AC=window.AudioContext||window.webkitAudioContext;if(AC){if(!ctx)ctx=new AC();ctx.resume();const t=ctx.currentTime+0.02,m=MIDI[b.dataset.c];note(m,t);note(m+7,t+0.45)}
-  if(last)last.classList.remove('on');b.classList.add('on');last=b});
+  if(last)last.classList.remove('on');b.classList.add('on');last=b;
+  const u=unlock();if(!u)return;
+  u.then(()=>{const t=ctx.currentTime+0.04,m=MIDI[b.dataset.c];note(m,t);note(m+7,t+0.45)});
+});
 })();
 </script>
 
