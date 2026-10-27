@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "trailingSlash": true,
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/", "destination": "/bajo/", "permanent": false }
+  ]
+}
