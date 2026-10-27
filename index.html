@@ -2,96 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Diagramas de bajo de No te pido flores: verso Eb Bb Cm Ab, coro Eb Bb Fm Ab.">
-<title>Diagramas de Bajo · No te pido flores</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&family=Figtree:wght@800&display=swap">
-<style>
-html{-webkit-text-size-adjust:100%}
-body{margin:0}
-button{-webkit-tap-highlight-color:transparent}
-/* Layout: dos bloques (Verso, Coro), cada uno con 4 tarjetas: nombre grande + diagrama vertical de bajo */
-:root{
-  --bg:#f3f1ec; --card:#fff; --ink:#1d1a17; --muted:#857c73; --line:#ddd6cc; --grid:#3a332d; --accent:#d4572a;
-  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
-  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
-}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#151311;--card:#1f1c19;--ink:#f1ebe3;--muted:#a59c92;--line:#36302a;--grid:#cfc6ba;--accent:#f0754a;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#151311;--card:#1f1c19;--ink:#f1ebe3;--muted:#a59c92;--line:#36302a;--grid:#cfc6ba;--accent:#f0754a;color-scheme:dark}
-*,*::before,*::after{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body)}
-.wrap{max-width:1000px;margin:0 auto;padding-block:20px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
-h2{margin:0 0 10px;font-family:var(--f-display);font-weight:900;font-size:clamp(28px,7vw,40px);text-transform:uppercase;line-height:1}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-@media (max-width:640px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 10px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font:inherit;color:inherit;touch-action:manipulation}
-.card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.card.on{border-color:var(--accent)}
-.card b{font-family:var(--f-display);font-weight:900;font-size:clamp(56px,15vw,84px);line-height:.85}
-.card svg{width:100%;max-width:190px;height:auto;display:block}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No te pido flores · Bajo</title>
+<meta http-equiv="refresh" content="0; url=bajo/">
+<link rel="canonical" href="bajo/">
+<style>body{margin:0;font:16px system-ui,sans-serif;background:#f3f1ec;color:#1d1a17;display:grid;place-items:center;min-height:100vh}a{color:#d4572a;font-weight:700}</style>
 </head>
 <body>
-
-<div class="wrap">
-  <section><h2>Verso</h2><div class="grid" id="verso"></div></section>
-  <section><h2>Coro</h2><div class="grid" id="coro"></div></section>
-</div>
-
-<script>
-(()=>{
-// [cuerda, traste] — cuerda 4 = E (gruesa) … 1 = G. Primera = nota principal, segunda = quinta.
-const POS={Eb:[[3,6],[2,8]],Bb:[[4,6],[3,8]],Cm:[[3,3],[2,5]],Ab:[[4,4],[3,6]],Fm:[[3,8],[2,10]]};
-const MIDI={Eb:39,Bb:34,Cm:36,Ab:32,Fm:41};
-function diagram(c){
-  const [[rs,rf],[fs,ff]]=POS[c];
-  const lo=Math.min(rf,ff),start=lo<=2?1:lo-1,N=4;          // 4 trastes visibles
-  const W=170,H=210,X0=30,X1=150,Y0=30,Y1=180,dx=(X1-X0)/3,dy=(Y1-Y0)/N;
-  const xs=s=>X0+(4-s)*dx;                                   // cuerda 4 a la izquierda
-  const yf=f=>Y0+(f-start+.5)*dy;
-  let g='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+c+': nota principal cuerda '+rs+' traste '+rf+', segunda nota cuerda '+fs+' traste '+ff+'">';
-  for(let i=0;i<=N;i++)g+='<line x1="'+X0+'" x2="'+X1+'" y1="'+(Y0+i*dy)+'" y2="'+(Y0+i*dy)+'" stroke="var(--grid)" stroke-width="'+(i===0&&start===1?6:1.6)+'"/>';
-  for(let s=1;s<=4;s++)g+='<line x1="'+xs(s)+'" x2="'+xs(s)+'" y1="'+Y0+'" y2="'+Y1+'" stroke="var(--grid)" stroke-width="'+(1+s*0.5)+'"/><text x="'+xs(s)+'" y="'+(Y1+22)+'" text-anchor="middle" font-family="Figtree,sans-serif" font-size="14" font-weight="800" fill="var(--muted)">'+s+'</text>';
-  if(start>1)g+='<text x="'+(X0-10)+'" y="'+(Y0+dy*.5+6)+'" text-anchor="end" font-family="Figtree,sans-serif" font-size="16" font-weight="800" fill="var(--ink)">'+start+'</text>';
-  g+='<circle cx="'+xs(fs)+'" cy="'+yf(ff)+'" r="13" fill="none" stroke="var(--accent)" stroke-width="3.5"/>';
-  g+='<circle cx="'+xs(rs)+'" cy="'+yf(rf)+'" r="15" fill="var(--accent)"/>';
-  return g+'</svg>';
-}
-const card=c=>'<button type="button" class="card" data-c="'+c+'"><b>'+c+'</b>'+diagram(c)+'</button>';
-document.getElementById('verso').innerHTML=['Eb','Bb','Cm','Ab'].map(card).join('');
-document.getElementById('coro').innerHTML=['Eb','Bb','Fm','Ab'].map(card).join('');
-let ctx=null,master=null,keep=null,last=null;
-const phone=(()=>{try{return matchMedia('(pointer:coarse)').matches||/iPhone|iPad|Android/i.test(navigator.userAgent)}catch(e){return false}})();
-function silentWav(){const sr=8000,n=1600,b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))};
-  w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
-  let s='';new Uint8Array(b).forEach(x=>s+=String.fromCharCode(x));return 'data:audio/wav;base64,'+btoa(s)}
-// Debe correr dentro del toque: crea y despierta el audio (iPhone/Android lo exigen)
-function unlock(){
-  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
-  try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}   // iPhone: suena aunque esté en silencio
-  if(!ctx){ctx=new AC();master=ctx.createGain();master.gain.value=0.9;const c=ctx.createDynamicsCompressor();master.connect(c);c.connect(ctx.destination)}
-  try{if(!keep){keep=new Audio(silentWav());keep.loop=true;keep.setAttribute('playsinline','')}const p=keep.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}
-  let r=Promise.resolve();if(ctx.state!=='running'){try{r=ctx.resume()}catch(e){}}
-  try{const b=ctx.createBuffer(1,1,22050),x=ctx.createBufferSource();x.buffer=b;x.connect(ctx.destination);x.start(0)}catch(e){}
-  return Promise.resolve(r).catch(()=>{});
-}
-['pointerdown','touchend','keydown'].forEach(n=>document.addEventListener(n,()=>{if(!ctx||ctx.state!=='running')unlock()},{passive:true}));
-function note(m,t){
-  const f=440*Math.pow(2,(m-69)/12)*(phone?2:1),o=ctx.createOscillator(),o2=ctx.createOscillator(),o3=ctx.createOscillator(),g3=ctx.createGain(),lp=ctx.createBiquadFilter(),g=ctx.createGain();
-  o.type='sawtooth';o.frequency.value=f;o2.type='sine';o2.frequency.value=f;o3.type='square';o3.frequency.value=f*2;g3.gain.value=0.15;
-  lp.type='lowpass';lp.frequency.setValueAtTime(phone?2600:1800,t);lp.frequency.exponentialRampToValueAtTime(phone?800:420,t+0.4);
-  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.7,t+0.008);g.gain.exponentialRampToValueAtTime(0.0001,t+0.9);
-  o.connect(lp);o2.connect(lp);o3.connect(g3);g3.connect(lp);lp.connect(g);g.connect(master);[o,o2,o3].forEach(x=>{x.start(t);x.stop(t+0.95)});
-}
-document.addEventListener('click',e=>{const b=e.target.closest('.card');if(!b)return;
-  if(last)last.classList.remove('on');b.classList.add('on');last=b;
-  const u=unlock();if(!u)return;
-  u.then(()=>{const t=ctx.currentTime+0.04,m=MIDI[b.dataset.c];note(m,t);note(m+7,t+0.45)});
-});
-})();
-</script>
-
+<p>Abriendo el bajo de <i>No te pido flores</i>… <a href="bajo/">Entrar</a> · <a href="setlist/">Setlist guitarra</a></p>
+<script>location.replace('bajo/'+location.hash)</script>
 </body>
 </html>

@@ -1,4 +1,13 @@
-# No te pido flores · Diagramas de bajo
+# No te pido flores · Bajo y setlist
+
+| Pestaña | Dirección |
+|---|---|
+| Bajo · No te pido flores (protegida) | `/bajo/` (la dirección principal abre aquí) |
+| Setlist guitarra | `/setlist/` |
+
+Respaldo protegido del bajo: rama `respaldo-bajo-fanny-lu`.
+
+## Bajo · No te pido flores
 
 Bajo 4 cuerdas · Eb · 106 BPM. Cuerda 4 = E (gruesa) … 1 = G (delgada).
 
