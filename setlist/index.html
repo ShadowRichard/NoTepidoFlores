@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Setlist de ensayo: progresiones de acordes para guitarra. Mala gente, Nada fue un error, El sol no regresa, No te pido flores.">
+<title>Setlist de Ensayo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Figtree:wght@500;700;800&family=JetBrains+Mono:wght@700&display=swap">
+<style>
+/* Layout: cabecera con las 4 canciones · ficha de la canción (tono, capo, transportar) · secciones con acordes · diagramas de guitarra · aviso de derechos */
+:root{
+  --bg:#f3f1ec; --panel:#fff; --ink:#1d1a17; --muted:#756d65; --line:#ddd6cc; --soft:#ebe6de;
+  --accent:#d4572a; --onaccent:#fff; --note:#fbefd2; --note-ink:#7a5300;
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#151311; --panel:#1f1c19; --ink:#f1ebe3; --muted:#a59c92; --line:#36302a; --soft:#2a2622;
+  --accent:#f0754a; --onaccent:#1a0f0a; --note:#3a2e14; --note-ink:#f2c46b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151311; --panel:#1f1c19; --ink:#f1ebe3; --muted:#a59c92; --line:#36302a; --soft:#2a2622;
+  --accent:#f0754a; --onaccent:#1a0f0a; --note:#3a2e14; --note-ink:#f2c46b; color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:960px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+.top{position:sticky;top:0;z-index:10;background:var(--bg);padding-top:max(14px,env(safe-area-inset-top,0px));border-bottom:1px solid var(--line)}
+.top h1{margin:0;font-family:var(--f-display);font-weight:900;text-transform:uppercase;font-size:clamp(26px,6vw,38px);line-height:.95}
+.top p{margin:2px 0 10px;font:700 12px var(--f-mono);color:var(--muted)}
+.songs{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+.songs::-webkit-scrollbar{display:none}
+.songs button{flex:0 0 auto;display:flex;align-items:center;gap:8px;min-height:46px;padding:0 14px 0 8px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-weight:800;font-size:14px;white-space:nowrap}
+.songs button i{font-style:normal;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font:800 13px var(--f-mono)}
+.songs button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.songs button[aria-pressed="true"] i{background:var(--accent);color:var(--onaccent)}
+
+main{padding-block:18px 40px;display:flex;flex-direction:column;gap:18px}
+.head h2{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(40px,10vw,64px);line-height:.9;text-transform:uppercase;text-wrap:balance}
+.head .by{margin:6px 0 0;color:var(--muted);font-weight:700}
+.facts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fact{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 12px;min-width:84px}
+.fact small{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fact b{font-family:var(--f-display);font-weight:900;font-size:28px;line-height:1}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ctl .tp{display:flex;align-items:center;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px}
+.ctl .tp button{width:42px;height:42px;border:none;border-radius:9px;background:var(--soft);font-size:22px;font-weight:800}
+.ctl .tp span{min-width:96px;text-align:center;font-weight:800;font-size:14px}
+.tog{min-height:50px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-weight:800;font-size:14px}
+.tog[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.reset{background:none;border:none;color:var(--muted);font-weight:700;font-size:13px;text-decoration:underline;min-height:40px}
+
+.secs{display:flex;flex-direction:column;gap:10px}
+.sec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.sec h3{margin:0;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.line{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ch{min-width:58px;min-height:48px;padding:4px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-family:var(--f-display);font-weight:900;font-size:28px;line-height:1}
+.ch.on{border-color:var(--accent);background:var(--accent);color:var(--onaccent)}
+.rep{font:800 14px var(--f-mono);color:var(--muted);padding:0 4px}
+.bar{color:var(--line);font-weight:800;font-size:20px}
+.tip{margin:0;font-size:13px;font-weight:700;color:var(--muted)}
+.warn{background:var(--note);color:var(--note-ink);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;margin:0}
+
+.dgs h3{margin:0 0 8px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.dg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 6px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.dg.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.dg b{font-family:var(--f-display);font-weight:900;font-size:24px;line-height:1}
+.dg small{font:700 11px var(--f-mono);color:var(--muted);min-height:1.2em}
+.dg svg{width:100%;max-width:110px;height:auto;display:block}
+
+.legal{border-top:1px solid var(--line);padding-top:14px;font-size:13px;color:var(--muted)}
+.legal h3{margin:0 0 6px;font-size:13px;color:var(--ink)}
+.legal p{margin:0 0 8px;max-width:72ch}
+.legal ul{margin:0 0 8px;padding-left:18px}
+.legal a{color:var(--ink)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <h1>Setlist de ensayo</h1>
+  <p>Acordes para guitarra · toca un acorde para verlo y oírlo</p>
+  <nav class="songs" id="songs" aria-label="Canciones"></nav>
+</div></header>
+
+<main class="wrap" id="main">
+  <section class="head"><h2 id="title"></h2><p class="by" id="by"></p></section>
+  <div class="facts" id="facts"></div>
+  <div class="ctl">
+    <div class="tp" aria-label="Transportar"><button type="button" id="dn" aria-label="Bajar medio tono">−</button><span id="tpTxt">Tono original</span><button type="button" id="up" aria-label="Subir medio tono">+</button></div>
+    <button type="button" class="tog" id="capoBtn" aria-pressed="false">Formas con capo</button>
+    <button type="button" class="reset" id="reset">Volver al tono original</button>
+  </div>
+  <p class="tip" id="capoTip"></p>
+  <div class="secs" id="secs"></div>
+  <section class="dgs"><h3>Diagramas de esta canción</h3><div class="dgrid" id="dgs"></div></section>
+
+  <footer class="legal">
+    <h3>Derechos de autor</h3>
+    <p>Esta página es material de ensayo para uso personal y de la banda. <b>No incluye las letras</b>: las letras y las grabaciones están protegidas por derechos de autor de sus compositores y editoriales.</p>
+    <ul>
+      <li><i>Mala gente</i> — interpretada por Juanes.</li>
+      <li><i>Nada fue un error</i> — interpretada por Coti.</li>
+      <li><i>El sol no regresa</i> — interpretada por La Quinta Estación.</li>
+      <li><i>No te pido flores</i> — interpretada por Fanny Lu.</li>
+    </ul>
+    <p>Todos los derechos pertenecen a sus autores, compositores y editoriales. Las progresiones son transcripciones no oficiales para estudio; confírmalas de oído con la grabación. Para presentar estas canciones en público, la licencia de comunicación pública la gestiona normalmente el lugar o el organizador ante SAYCO-ACINPRO (Colombia).</p>
+    <p>Fuentes de las progresiones: <a href="https://acordes.lacuerda.net/juanes/mala_gente.shtml" target="_blank" rel="noopener">LaCuerda – Mala gente</a> · <a href="https://acordes.lacuerda.net/coti/nada_fue_un_error-3.shtml" target="_blank" rel="noopener">LaCuerda – Nada fue un error</a> · <a href="https://acordes.lacuerda.net/5a_estacion/el_sol_no_regresa" target="_blank" rel="noopener">LaCuerda – El sol no regresa</a> · <i>No te pido flores</i>: acordes de Moises (cover de Miguel Torres) y digitación de la banda.</p>
+  </footer>
+</main>
+
+<script>
+(()=>{
+'use strict';
+/* ===== Repertorio (acordes en el tono de la fuente). Cada línea: [acordes, repeticiones] ===== */
+const SONGS=[
+ {id:'mala',t:'Mala gente',a:'Juanes',key:'Bm',src:'LaCuerda',
+  secs:[
+   ['Intro',[[['Bm','F#'],2]],'Riff de guitarra líder sobre Bm – F# (base sugerida; la fuente solo trae tablatura).'],
+   ['Verso 1',[[['Bm','F#'],6],[['Em','F#'],2],[['Bm'],1]]],
+   ['Coro',[[['Bm','F#'],3],[['Em','F#'],1],[['Bm'],1]]],
+   ['Solo',[[['Bm','F#'],4]],'Solo de guitarra líder (base sugerida Bm – F#).'],
+   ['Verso 2',[[['Bm','F#'],4],[['E','F#'],2],[['Bm'],1]],'Aquí la fuente marca E mayor, no Em.'],
+   ['Coro final',[[['Bm','F#'],3],[['Em','F#'],1],[['Bm'],1]],'Repetir el coro y cerrar en Bm.']
+  ]},
+ {id:'nada',t:'Nada fue un error',a:'Coti',key:'A',src:'LaCuerda',
+  secs:[
+   ['Intro',[[['A','E/G#','D','E'],1]]],
+   ['Verso',[[['A','E/G#','D/F#','E/G#'],2]],'Bajo descendente: A – G# – F# – G#.'],
+   ['Coro',[[['A','E','D','E'],2]]],
+   ['Solo',[[['G','A','G','E'],1]]],
+   ['Final',[[['G','A'],1]]]
+  ]},
+ {id:'sol',t:'El sol no regresa',a:'La Quinta Estación',key:'D',src:'LaCuerda',
+  secs:[
+   ['Intro',[[['G','A','D','D7'],1],[['G','A','D','G/D'],1]]],
+   ['Verso',[[['D','G','A','G','D'],1],[['D','G','A','G','D','D7'],1]]],
+   ['Coro',[[['G','A','D','Bm'],1],[['G','A','D','D7'],1]],'Repetir el coro 2 veces al final.'],
+   ['Final',[[['G','A','D'],1]]]
+  ]},
+ {id:'flores',t:'No te pido flores',a:'Fanny Lu',key:'Eb',bpm:106,src:'Moises',
+  secs:[
+   ['Intro',[[['Ab','Eb'],1],[['Ab','Eb','Bb','Fm'],1],[['Ab','Bb','Eb','Bb'],1],[['Fm','Ab','Eb'],1]]],
+   ['Verso',[[['Eb','Bb','Cm','Ab'],2]]],
+   ['Pre-coro',[[['Bb','Eb','Cm'],1],[['Bb','Ab','Bb','Eb'],1]]],
+   ['Coro',[[['Eb','Bb','Fm','Ab'],2]]],
+   ['Puente',[[['Eb','Fm','Bb','Ab'],1],[['Fm','Eb','Bb','Fm','Ab'],1],[['Eb','Bb','Fm','Ab'],2]]],
+   ['Final',[[['Eb','Bb','Fm','Ab'],3],[['Eb'],1]]]
+  ]}
+];
+
+/* ===== Teoría: transportar y nombrar ===== */
+const SH=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],FL=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const PC={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+const pcOf=n=>(PC[n[0]]+(n[1]==='#'?1:n[1]==='b'?-1:0)+12)%12;
+const parse=c=>{const m=c.match(/^([A-G][#b]?)([^/]*)(?:\/([A-G][#b]?))?$/);return {r:pcOf(m[1]),q:m[2],b:m[3]!=null?pcOf(m[3]):null}};
+const FLAT_KEYS=new Set(['F','Bb','Eb','Ab','Db','Gb','Dm','Gm','Cm','Fm','Bbm','Ebm']);
+const keyName=(k,shift)=>{const p=parse(k),m=p.q==='m';const pc=(p.r+shift+12)%12;const flat=FL[pc]+(m?'m':''),sharp=SH[pc]+(m?'m':'');
+  return (FLAT_KEYS.has(flat)||['Db','Gb','Ab','Eb','Bb','F'].includes(FL[pc])&&!m)?flat:sharp};
+function useFlats(keyStr){return FLAT_KEYS.has(keyStr)||/b/.test(keyStr.replace(/m$/,''))}
+function name(c,shift,flats){const p=parse(c),N=flats?FL:SH;return N[(p.r+shift+120)%12]+p.q+(p.b!=null?'/'+N[(p.b+shift+120)%12]:'')}
+
+/* ===== Formas de guitarra (cuerdas 6→1, -1 = no se toca) ===== */
+const OPEN={'C':[-1,3,2,0,1,0],'D':[-1,-1,0,2,3,2],'E':[0,2,2,1,0,0],'G':[3,2,0,0,0,3],'A':[-1,0,2,2,2,0],
+  'Am':[-1,0,2,2,1,0],'Em':[0,2,2,0,0,0],'Dm':[-1,-1,0,2,3,1],
+  'C7':[-1,3,2,3,1,0],'D7':[-1,-1,0,2,1,2],'E7':[0,2,0,1,0,0],'G7':[3,2,0,0,0,1],'A7':[-1,0,2,0,2,0],'B7':[-1,2,1,2,0,2],
+  'Am7':[-1,0,2,0,1,0],'Em7':[0,2,0,0,0,0],'Dm7':[-1,-1,0,2,1,1],
+  'D/F#':[2,0,0,2,3,2],'E/G#':[4,2,2,1,0,0],'G/D':[-1,-1,0,0,0,3],'G/B':[-1,2,0,0,0,3],'C/E':[0,3,2,0,1,0],'C/G':[3,3,2,0,1,0],'A/C#':[-1,4,2,2,2,0],'Am/G':[3,0,2,2,1,0]};
+const ESH={'':[0,2,2,1,0,0],'m':[0,2,2,0,0,0],'7':[0,2,0,1,0,0],'m7':[0,2,0,0,0,0]};
+const ASH={'':[-1,0,2,2,2,0],'m':[-1,0,2,2,1,0],'7':[-1,0,2,0,2,0],'m7':[-1,0,2,0,1,0]};
+const OPEN_MIDI=[40,45,50,55,59,64];
+function shape(nm){
+  if(OPEN[nm])return OPEN[nm];
+  const p=parse(nm),q=ESH[p.q]?p.q:(p.q.startsWith('m')?'m':'');
+  const fe=(p.r-4+12)%12||12,fa=(p.r-9+12)%12||12;
+  const useA=fa<=fe;const base=useA?ASH[q]:ESH[q],f=useA?fa:fe;
+  return base.map(x=>x<0?-1:x+f);
+}
+function diagram(nm,shp){
+  const pos=shp.filter(x=>x>0),mx=Math.max(0,...pos),mn=pos.length?Math.min(...pos):1;
+  const start=mx<=4?1:mn,N=4,W=110,H=128,X0=18,X1=96,Y0=24,dy=22,dx=(X1-X0)/5;
+  let g='<svg viewBox="0 0 '+W+' '+H+'" aria-hidden="true">';
+  for(let i=0;i<=N;i++)g+='<line x1="'+X0+'" x2="'+X1+'" y1="'+(Y0+i*dy)+'" y2="'+(Y0+i*dy)+'" stroke="currentColor" stroke-opacity=".55" stroke-width="'+(i===0&&start===1?4:1.2)+'"/>';
+  for(let s=0;s<6;s++)g+='<line x1="'+(X0+s*dx)+'" x2="'+(X0+s*dx)+'" y1="'+Y0+'" y2="'+(Y0+N*dy)+'" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2"/>';
+  if(start>1)g+='<text x="'+(X1+4)+'" y="'+(Y0+dy*.5+4)+'" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700" fill="currentColor">'+start+'</text>';
+  // cejilla: si hay 3+ cuerdas en el traste más bajo y es la primera
+  const minF=pos.length?Math.min(...pos):0,barre=shp.map((x,i)=>x===minF?i:-1).filter(i=>i>=0);
+  const b0=barre[0],b1=barre[barre.length-1];
+  if(minF>0&&barre.length>=2&&b1-b0>=3&&shp.slice(b0,b1+1).every(x=>x>=minF)){const y=Y0+(minF-start+.5)*dy;g+='<rect x="'+(X0+barre[0]*dx-6)+'" y="'+(y-6)+'" width="'+((barre[barre.length-1]-barre[0])*dx+12)+'" height="12" rx="6" fill="var(--accent)"/>'}
+  shp.forEach((f,s)=>{const x=X0+s*dx;
+    if(f<0)g+='<text x="'+x+'" y="'+(Y0-8)+'" text-anchor="middle" font-family="Figtree,sans-serif" font-size="12" font-weight="800" fill="var(--muted)">×</text>';
+    else if(f===0)g+='<circle cx="'+x+'" cy="'+(Y0-11)+'" r="4" fill="none" stroke="var(--muted)" stroke-width="1.6"/>';
+    else g+='<circle cx="'+x+'" cy="'+(Y0+(f-start+.5)*dy)+'" r="7" fill="var(--accent)"/>';
+  });
+  return g+'</svg>';
+}
+
+/* ===== Sonido (rasgueo simple) ===== */
+let ctx=null,master=null,keep=null;
+function silentWav(){const sr=8000,n=1600,b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
+  let s='';new Uint8Array(b).forEach(x=>s+=String.fromCharCode(x));return 'data:audio/wav;base64,'+btoa(s)}
+function unlock(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+  try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
+  if(!ctx){ctx=new AC();master=ctx.createGain();master.gain.value=0.8;const c=ctx.createDynamicsCompressor();master.connect(c);c.connect(ctx.destination)}
+  try{if(!keep){keep=new Audio(silentWav());keep.loop=true;keep.setAttribute('playsinline','')}const p=keep.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}
+  let r=Promise.resolve();if(ctx.state!=='running'){try{r=ctx.resume()}catch(e){}}
+  return Promise.resolve(r).catch(()=>{})}
+['pointerdown','touchend','keydown'].forEach(n=>document.addEventListener(n,()=>{if(!ctx||ctx.state!=='running')unlock()},{passive:true}));
+function strum(shp,capo){const u=unlock();if(!u)return;u.then(()=>{const t0=ctx.currentTime+0.04;
+  shp.forEach((f,s)=>{if(f<0)return;const midi=OPEN_MIDI[s]+f+(capo||0),fr=440*Math.pow(2,(midi-69)/12),t=t0+s*0.028;
+    const o=ctx.createOscillator(),o2=ctx.createOscillator(),lp=ctx.createBiquadFilter(),g=ctx.createGain();
+    o.type='triangle';o.frequency.value=fr;o2.type='sawtooth';o2.frequency.value=fr;lp.type='lowpass';lp.frequency.setValueAtTime(3200,t);lp.frequency.exponentialRampToValueAtTime(900,t+0.5);
+    const g2=ctx.createGain();g2.gain.value=0.25;o2.connect(g2);g2.connect(lp);o.connect(lp);lp.connect(g);g.connect(master);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.22,t+0.006);g.gain.exponentialRampToValueAtTime(0.0001,t+1.6);
+    o.start(t);o2.start(t);o.stop(t+1.65);o2.stop(t+1.65)})})}
+
+/* ===== Estado y vista ===== */
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let cur=store.get('sl-song','mala');if(!SONGS.find(s=>s.id===cur))cur=SONGS[0].id;
+let shifts=store.get('sl-shift',{}),capoOn=store.get('sl-capo',false),sel=null;
+const EASY_MAJ=[0,2,4,7,9],EASY_MIN=[9,4,2,11]; // C D E G A · Am Em Dm Bm
+function capoFor(keyStr){const p=parse(keyStr),m=p.q==='m';for(let c=0;c<=5;c++){const pc=(p.r-c+12)%12;if((m?EASY_MIN:EASY_MAJ).includes(pc))return c}return 0}
+
+function render(){
+  const S=SONGS.find(s=>s.id===cur),sh=shifts[cur]||0,keyNow=keyName(S.key,sh),flats=useFlats(keyNow);
+  const capo=capoOn?capoFor(keyNow):0,shapeShift=sh-capo,shapeFlats=false;
+  $('songs').innerHTML=SONGS.map((s,i)=>'<button type="button" data-id="'+s.id+'" aria-pressed="'+(s.id===cur)+'"><i>'+(i+1)+'</i>'+s.t+'</button>').join('');
+  $('title').textContent=S.t;$('by').textContent=S.a;
+  $('facts').innerHTML='<div class="fact"><small>Tono</small><b>'+keyNow+'</b></div>'+
+    (S.bpm?'<div class="fact"><small>Tempo</small><b>'+S.bpm+'</b></div>':'')+
+    '<div class="fact"><small>Capo sugerido</small><b>'+(capoFor(keyNow)||'—')+'</b></div>';
+  $('tpTxt').textContent=sh===0?'Tono original':(sh>0?'+':'')+sh+' semitono'+(Math.abs(sh)>1?'s':'');
+  $('reset').hidden=sh===0;
+  $('capoBtn').setAttribute('aria-pressed',String(capoOn));
+  $('capoTip').textContent=capoOn?(capo?'Capo en traste '+capo+': los acordes se muestran como formas (suena en '+keyNow+').':'No hace falta capo en '+keyNow+'.'):'';
+  const nameOf=c=>capoOn?name(c,shapeShift,shapeFlats):name(c,sh,flats);
+  const used=[];
+  $('secs').innerHTML=S.secs.map(([n,lines,tip])=>'<section class="sec"><h3>'+n+'</h3>'+lines.map(([chs,rep])=>'<div class="line">'+
+    chs.map((c,i)=>{const nm=nameOf(c);if(!used.includes(nm))used.push(nm);return '<button type="button" class="ch" data-c="'+nm+'">'+nm+'</button>'}).join('')+
+    (rep>1?'<span class="rep">×'+rep+'</span>':'')+'</div>').join('')+(tip?'<p class="tip">'+tip+'</p>':'')+'</section>').join('');
+  $('dgs').innerHTML=used.map(nm=>{const p=parse(nm),bass=p.b!=null&&!OPEN[nm]?'bajo en '+nm.split('/')[1]:'';
+    return '<div class="dg" data-c="'+nm+'"><b>'+nm+'</b>'+diagram(nm,shape(nm))+'<small>'+bass+'</small></div>'}).join('');
+  if(sel)mark(sel,false);
+}
+function mark(nm,play){sel=nm;document.querySelectorAll('.ch,.dg').forEach(e=>e.classList.toggle('on',e.dataset.c===nm));
+  if(play){const S=SONGS.find(s=>s.id===cur),keyNow=keyName(S.key,shifts[cur]||0);strum(shape(nm),capoOn?capoFor(keyNow):0)}}
+document.addEventListener('click',e=>{
+  const sb=e.target.closest('#songs button');if(sb){cur=sb.dataset.id;store.set('sl-song',cur);sel=null;render();window.scrollTo({top:0});return}
+  const c=e.target.closest('[data-c]');if(c){mark(c.dataset.c,true)}
+});
+$('up').onclick=()=>{shifts[cur]=((shifts[cur]||0)+1);if(shifts[cur]>6)shifts[cur]-=12;store.set('sl-shift',shifts);sel=null;render()};
+$('dn').onclick=()=>{shifts[cur]=((shifts[cur]||0)-1);if(shifts[cur]<-6)shifts[cur]+=12;store.set('sl-shift',shifts);sel=null;render()};
+$('reset').onclick=()=>{shifts[cur]=0;store.set('sl-shift',shifts);sel=null;render()};
+$('capoBtn').onclick=()=>{capoOn=!capoOn;store.set('sl-capo',capoOn);sel=null;render()};
+render();
+})();
+</script>
+</body>
+</html>
