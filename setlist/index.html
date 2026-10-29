@@ -68,6 +68,9 @@ main{padding-block:18px 40px;display:flex;flex-direction:column;gap:18px}
 .rep b{font:900 30px var(--f-display)}
 .rep small{font:800 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
 .bar{color:var(--line);font-weight:800;font-size:20px}
+.pk svg{width:100%;max-width:150px;height:auto;display:block}
+.pk .dg{padding-bottom:6px}
+.dgrid#pno{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 .tip{margin:0;font-size:13px;font-weight:700;color:var(--muted)}
 .warn{background:var(--note);color:var(--note-ink);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;margin:0}
 
@@ -121,6 +124,7 @@ main{padding-block:18px 40px;display:flex;flex-direction:column;gap:18px}
   <p class="tip" id="capoTip"></p>
   <div class="secs" id="secs"></div>
   <section class="dgs"><h3>Diagramas de esta canción</h3><div class="dgrid" id="dgs"></div></section>
+  <section class="dgs" id="pnoSec" hidden><h3>Piano fácil · notas del acorde</h3><div class="dgrid" id="pno"></div></section>
 
   <footer class="legal">
     <h3>Derechos de autor</h3>
@@ -250,6 +254,27 @@ let accs=store.get('sl-acc',{}),shifts=store.get('sl-shift',{}),capoOn=store.get
 const EASY_MAJ=[0,2,4,7,9],EASY_MIN=[9,4,2,11]; // C D E G A · Am Em Dm Bm
 function capoFor(keyStr){const p=parse(keyStr),m=p.q==='m';for(let c=0;c<=5;c++){const pc=(p.r-c+12)%12;if((m?EASY_MIN:EASY_MAJ).includes(pc))return c}return 0}
 
+const PQ={'':[0,4,7],'m':[0,3,7],'7':[0,4,7,10],'m7':[0,3,7,10],'maj7':[0,4,7,11],'sus4':[0,5,7],'sus2':[0,2,7],'dim':[0,3,6],'5':[0,7]};
+const WHITE=[0,2,4,5,7,9,11],NL=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+function piano(nm){
+  const p=parse(nm),iv=PQ[p.q]||PQ[''],tones=iv.map(i=>(p.r+i)%12),rootPc=p.r,bassPc=p.b;
+  const hi=Math.max(...iv.map(i=>(p.r%12)+i));let st=p.r%12;if(!WHITE.includes(st))st--;
+  let en=hi;if(bassPc!=null&&!tones.includes(bassPc)){} while(!WHITE.includes(en%12))en++;
+  if(bassPc!=null){let bp=bassPc;while(bp<st)bp+=12;if(bp>en){en=bp;while(!WHITE.includes(en%12))en++}}
+  const whites=[],blacks=[];for(let k=st;k<=en;k++){(WHITE.includes(k%12)?whites:blacks).push(k)}
+  const kw=22,kh=84,bw=14,bh=52,W=whites.length*kw,pad=2;
+  const wx=k=>whites.indexOf(k)*kw;
+  const state=k=>{const pc=k%12;if(bassPc!=null&&pc===bassPc&&!(pc===rootPc&&bassPc===rootPc))return 'bass';if(pc===rootPc&&k<st+12)return 'root';return tones.includes(pc)&&k<=hi+(0)?'on':(tones.includes(pc)?'on':'')};
+  let g='<svg viewBox="0 0 '+(W+pad*2)+' '+(kh+22)+'" role="img" aria-label="Piano '+nm+': notas '+tones.map(t=>NL[t]).join(' ')+'">';
+  const used=new Set();
+  whites.forEach(k=>{let st2=state(k);const pc=k%12;if(st2&&used.has(pc)&&st2!=='bass'&&k>hi)st2='';if(st2)used.add(pc);
+    g+='<rect x="'+(pad+wx(k))+'" y="2" width="'+kw+'" height="'+kh+'" rx="3" fill="'+(st2==='root'?'var(--accent)':st2==='bass'?'#2b6cb0':st2==='on'?'var(--accent)':'#fff')+'" stroke="#1d1a17" stroke-width="1.4"/>';
+    if(st2)g+='<text x="'+(pad+wx(k)+kw/2)+'" y="'+(kh-8)+'" text-anchor="middle" font-family="Figtree,sans-serif" font-size="11" font-weight="800" fill="#fff">'+NL[pc]+'</text>'});
+  blacks.forEach(k=>{let st2=state(k);const pc=k%12;if(st2&&used.has(pc)&&st2!=='bass'&&k>hi)st2='';if(st2)used.add(pc);
+    const x=pad+wx(k-1)+kw-bw/2;
+    g+='<rect x="'+x+'" y="2" width="'+bw+'" height="'+bh+'" rx="2" fill="'+(st2==='root'?'var(--accent)':st2==='bass'?'#2b6cb0':st2==='on'?'var(--accent)':'#1d1a17')+'" stroke="#1d1a17" stroke-width="1"/>';
+    if(st2)g+='<text x="'+(x+bw/2)+'" y="'+(bh-6)+'" text-anchor="middle" font-family="Figtree,sans-serif" font-size="8" font-weight="800" fill="#fff">'+NL[pc]+'</text>'});
+  return g+'</svg>'}
 function render(){
   let S=SONGS.find(s=>s.id===cur),sh=shifts[cur]||0,accOn=(S.id==='sol'||S.id==='flores'),pref=accs[S.id]||'#',keyNow=keyName(S.key,sh),flats=accOn?pref==='b':useFlats(keyNow);
   if(accOn)keyNow=name(S.key,sh,flats);
@@ -270,6 +295,8 @@ function render(){
     (rep>1?'<span class="rep" title="Repite esta línea '+rep+' veces"><b>×'+rep+'</b><small>'+(rep===2?'repetir 2 veces':'repetir '+rep+' veces')+'</small></span>':'')+'</div>').join('')+(tip?'<p class="tip">'+tip+'</p>':'')+'</section>').join('');
   $('dgs').innerHTML=used.map(nm=>{const p=parse(nm),bass=p.b!=null&&!OPEN[nm]?'bajo en '+nm.split('/')[1]:'';
     return '<div class="dg" data-c="'+nm+'"><b>'+nm+'</b>'+diagram(nm,shape(nm))+'<small>'+bass+'</small></div>'}).join('');
+  const pn=S.id==='mala'||S.id==='nada';$('pnoSec').hidden=!pn;
+  $('pno').innerHTML=pn?used.map(nm=>{const p=parse(nm);return '<div class="dg pk" data-c="'+nm+'"><b>'+nm+'</b>'+piano(nm)+'<small>'+(p.b!=null?'bajo en '+nm.split('/')[1]:'')+'</small></div>'}).join(''):'';
   if(sel)mark(sel,false);
 }
 function mark(nm,play){sel=nm;document.querySelectorAll('.ch,.dg').forEach(e=>e.classList.toggle('on',e.dataset.c===nm));
