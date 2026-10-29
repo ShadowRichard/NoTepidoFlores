@@ -75,6 +75,14 @@ main{padding-block:18px 40px;display:flex;flex-direction:column;gap:18px}
 .dg b{font-family:var(--f-display);font-weight:900;font-size:24px;line-height:1}
 .dg small{font:700 11px var(--f-mono);color:var(--muted);min-height:1.2em}
 .dg svg{width:100%;max-width:110px;height:auto;display:block}
+@media (max-width:520px){
+  .songs{display:grid;grid-template-columns:1fr 1fr;overflow:visible}
+  .songs button{white-space:normal;line-height:1.15;padding:6px 10px 6px 8px}
+  .line{gap:5px}
+  .ch{min-width:0;flex:1 1 0;max-width:76px;min-height:52px;padding:4px 6px;font-size:26px}
+  .dgrid{grid-template-columns:repeat(3,1fr);gap:6px}
+  .dg{padding:6px 2px 2px}
+}
 
 .legal{border-top:1px solid var(--line);padding-top:14px;font-size:13px;color:var(--muted)}
 .legal h3{margin:0 0 6px;font-size:13px;color:var(--ink)}
