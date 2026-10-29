@@ -251,7 +251,7 @@ const EASY_MAJ=[0,2,4,7,9],EASY_MIN=[9,4,2,11]; // C D E G A · Am Em Dm Bm
 function capoFor(keyStr){const p=parse(keyStr),m=p.q==='m';for(let c=0;c<=5;c++){const pc=(p.r-c+12)%12;if((m?EASY_MIN:EASY_MAJ).includes(pc))return c}return 0}
 
 function render(){
-  let S=SONGS.find(s=>s.id===cur),sh=shifts[cur]||0,accOn=S.id==='sol',pref=accs[S.id]||'b',keyNow=keyName(S.key,sh),flats=accOn?pref==='b':useFlats(keyNow);
+  let S=SONGS.find(s=>s.id===cur),sh=shifts[cur]||0,accOn=(S.id==='sol'||S.id==='flores'),pref=accs[S.id]||'#',keyNow=keyName(S.key,sh),flats=accOn?pref==='b':useFlats(keyNow);
   if(accOn)keyNow=name(S.key,sh,flats);
   $('acc').hidden=!accOn;document.querySelectorAll('#acc .tog').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.a===pref)));
   const capo=capoOn?capoFor(keyNow):0,shapeShift=sh-capo,shapeFlats=false;
