@@ -63,7 +63,9 @@ main{padding-block:18px 40px;display:flex;flex-direction:column;gap:18px}
 .line{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .ch{min-width:58px;min-height:48px;padding:4px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-family:var(--f-display);font-weight:900;font-size:28px;line-height:1}
 .ch.on{border-color:var(--accent);background:var(--accent);color:var(--onaccent)}
-.rep{font:800 14px var(--f-mono);color:var(--muted);padding:0 4px}
+.rep{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-height:52px;padding:4px 12px;border-radius:10px;border:2px solid var(--accent);color:var(--accent);line-height:1}
+.rep b{font:900 30px var(--f-display)}
+.rep small{font:800 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
 .bar{color:var(--line);font-weight:800;font-size:20px}
 .tip{margin:0;font-size:13px;font-weight:700;color:var(--muted)}
 .warn{background:var(--note);color:var(--note-ink);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;margin:0}
@@ -261,7 +263,7 @@ function render(){
   const used=[];
   $('secs').innerHTML=S.secs.map(([n,lines,tip])=>'<section class="sec"><h3>'+n+'</h3>'+lines.map(([chs,rep])=>'<div class="line">'+
     chs.map((c,i)=>{const nm=nameOf(c);if(!used.includes(nm))used.push(nm);return '<button type="button" class="ch" data-c="'+nm+'">'+nm+'</button>'}).join('')+
-    (rep>1?'<span class="rep">×'+rep+'</span>':'')+'</div>').join('')+(tip?'<p class="tip">'+tip+'</p>':'')+'</section>').join('');
+    (rep>1?'<span class="rep" title="Repite esta línea '+rep+' veces"><b>×'+rep+'</b><small>'+(rep===2?'repetir 2 veces':'repetir '+rep+' veces')+'</small></span>':'')+'</div>').join('')+(tip?'<p class="tip">'+tip+'</p>':'')+'</section>').join('');
   $('dgs').innerHTML=used.map(nm=>{const p=parse(nm),bass=p.b!=null&&!OPEN[nm]?'bajo en '+nm.split('/')[1]:'';
     return '<div class="dg" data-c="'+nm+'"><b>'+nm+'</b>'+diagram(nm,shape(nm))+'<small>'+bass+'</small></div>'}).join('');
   if(sel)mark(sel,false);
