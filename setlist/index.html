@@ -54,6 +54,7 @@ main{padding-block:18px 40px;display:flex;flex-direction:column;gap:18px}
 .ctl .tp button{width:42px;height:42px;border:none;border-radius:9px;background:var(--soft);font-size:22px;font-weight:800}
 .ctl .tp span{min-width:96px;text-align:center;font-weight:800;font-size:14px}
 .tog{min-height:50px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-weight:800;font-size:14px}
+.acc{display:flex;gap:8px}.acc .tog{flex:1}
 .tog[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
 .reset{background:none;border:none;color:var(--muted);font-weight:700;font-size:13px;text-decoration:underline;min-height:40px}
 
@@ -113,6 +114,7 @@ main{padding-block:18px 40px;display:flex;flex-direction:column;gap:18px}
   <div class="facts" id="facts"></div>
   <div class="ctl">
     <div class="tp" aria-label="Transportar"><button type="button" id="dn" aria-label="Bajar medio tono">−</button><span id="tpTxt">Tono original</span><button type="button" id="up" aria-label="Subir medio tono">+</button></div>
+    <div class="acc" id="acc" hidden role="group" aria-label="Notación"><button type="button" class="tog" data-a="b">♭ Bemoles</button><button type="button" class="tog" data-a="#">♯ Sostenidos</button></div>
     <button type="button" class="tog" id="capoBtn" aria-pressed="false">Formas con capo</button>
     <button type="button" class="reset" id="reset">Volver al tono original</button>
   </div>
@@ -244,12 +246,14 @@ function strum(shp,capo){const u=unlock();if(!u)return;u.then(()=>{const t0=ctx.
 const $=id=>document.getElementById(id);
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 let cur=store.get('sl-song','mala');if(!SONGS.find(s=>s.id===cur))cur=SONGS[0].id;
-let shifts=store.get('sl-shift',{}),capoOn=store.get('sl-capo',false),sel=null;
+let accs=store.get('sl-acc',{}),shifts=store.get('sl-shift',{}),capoOn=store.get('sl-capo',false),sel=null;
 const EASY_MAJ=[0,2,4,7,9],EASY_MIN=[9,4,2,11]; // C D E G A · Am Em Dm Bm
 function capoFor(keyStr){const p=parse(keyStr),m=p.q==='m';for(let c=0;c<=5;c++){const pc=(p.r-c+12)%12;if((m?EASY_MIN:EASY_MAJ).includes(pc))return c}return 0}
 
 function render(){
-  const S=SONGS.find(s=>s.id===cur),sh=shifts[cur]||0,keyNow=keyName(S.key,sh),flats=useFlats(keyNow);
+  let S=SONGS.find(s=>s.id===cur),sh=shifts[cur]||0,accOn=S.id==='sol',pref=accs[S.id]||'b',keyNow=keyName(S.key,sh),flats=accOn?pref==='b':useFlats(keyNow);
+  if(accOn)keyNow=name(S.key,sh,flats);
+  $('acc').hidden=!accOn;document.querySelectorAll('#acc .tog').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.a===pref)));
   const capo=capoOn?capoFor(keyNow):0,shapeShift=sh-capo,shapeFlats=false;
   $('songs').innerHTML=SONGS.map((s,i)=>'<button type="button" data-id="'+s.id+'" aria-pressed="'+(s.id===cur)+'"><i>'+(i+1)+'</i>'+s.t+'</button>').join('');
   $('title').textContent=S.t;$('by').textContent=S.a;
@@ -277,6 +281,7 @@ document.addEventListener('click',e=>{
 $('up').onclick=()=>{shifts[cur]=((shifts[cur]||0)+1);if(shifts[cur]>6)shifts[cur]-=12;store.set('sl-shift',shifts);sel=null;render()};
 $('dn').onclick=()=>{shifts[cur]=((shifts[cur]||0)-1);if(shifts[cur]<-6)shifts[cur]+=12;store.set('sl-shift',shifts);sel=null;render()};
 $('reset').onclick=()=>{shifts[cur]=0;store.set('sl-shift',shifts);sel=null;render()};
+$('acc').onclick=e=>{const b=e.target.closest('.tog');if(!b)return;accs[cur]=b.dataset.a;store.set('sl-acc',accs);sel=null;render()};
 $('capoBtn').onclick=()=>{capoOn=!capoOn;store.set('sl-capo',capoOn);sel=null;render()};
 render();
 })();
