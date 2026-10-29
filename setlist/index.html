@@ -244,8 +244,7 @@ function render(){
   $('songs').innerHTML=SONGS.map((s,i)=>'<button type="button" data-id="'+s.id+'" aria-pressed="'+(s.id===cur)+'"><i>'+(i+1)+'</i>'+s.t+'</button>').join('');
   $('title').textContent=S.t;$('by').textContent=S.a;
   $('facts').innerHTML='<div class="fact"><small>Tono</small><b>'+keyNow+'</b></div>'+
-    (S.bpm?'<div class="fact"><small>Tempo</small><b>'+S.bpm+'</b></div>':'')+
-    '<div class="fact"><small>Capo sugerido</small><b>'+(capoFor(keyNow)||'—')+'</b></div>';
+    (S.bpm?'<div class="fact"><small>Tempo</small><b>'+S.bpm+'</b></div>':'');
   $('tpTxt').textContent=sh===0?'Tono original':(sh>0?'+':'')+sh+' semitono'+(Math.abs(sh)>1?'s':'');
   $('reset').hidden=sh===0;
   $('capoBtn').setAttribute('aria-pressed',String(capoOn));
